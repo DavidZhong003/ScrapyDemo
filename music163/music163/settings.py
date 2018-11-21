@@ -9,6 +9,8 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+LOG_LEVEL = 'INFO'
+
 BOT_NAME = 'music163'
 
 SPIDER_MODULES = ['music163.spiders']
@@ -52,10 +54,12 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'music163.middlewares.Music163DownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'music163.selenium_middkewares.SeleniumMiddleware': 543,
+}
+SELENIUM_TIMEOUT = 20
 
+PHANTOMJS_SERVICE_ARGS = ['--load-images=false', '--disk-cache=true']
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
