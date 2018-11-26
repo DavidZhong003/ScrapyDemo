@@ -44,8 +44,8 @@ class MysqlPipeline(object):
     def process_item(self, item, spider):
         data = dict(item)
         keys = ', '.join(data.keys())
-        valus = ', '.join(['%s'] * len(data))
-        sql = 'insert into %s (%s) values (%s)' % (item.table, keys, valus)
+        values = ', '.join(['%s'] * len(data))
+        sql = 'insert into %s (%s) values (%s)' % (item.table, keys, values)
         self.cursor.execute(sql, tuple(data.values()))
         self.db.commit()
         return item

@@ -7,6 +7,24 @@ import re
 
 
 # 抓取入驻歌手
+def parse_artists(response):
+    selector = response.selector
+    artists = selector.xpath('//*[@id="m-artist-box"]/li[@class="sml"]')
+    for artist in artists:
+        artist_item = ArtistItem()
+        artist_item['name'] = artist.xpath('./a[1]/text()').extract_first()
+        artist_item['artist_url'] = artist.xpath('./a[1]/@href').extract_first()
+        artist_item['artist_id'] = re.findall('[1-9]\d*', artist_item['artist_url'])[0]
+        # //*[@id="m-artist-box"]/li[11]/a[2]
+        artist_item['home_url'] = artist.xpath('./a[2]/@href').extract_first()
+        if artist_item['home_url'] is not None:
+            artist_item['home_id'] = re.findall('[1-9]\d*', artist_item['home_url']).pop()
+        else:
+            artist_item['home_id'] = None
+        ArtistsSpider.logger.info(artist)
+        ArtistsSpider.logger.info(artist_item)
+
+
 class ArtistsSpider(scrapy.Spider):
     name = 'artists'
     allowed_domains = ['music.163.com']
@@ -20,19 +38,5 @@ class ArtistsSpider(scrapy.Spider):
         yield Request(url, method='post', callback=self.parse)
 
     def parse(self, response):
-        selector = response.selector
-        artists = selector.xpath('//*[@id="m-artist-box"]/li[@class="sml"]')
-        for artist in artists:
-            artist_item = ArtistItem()
-            artist_item['name'] = artist.xpath('./a[1]/text()').extract_first()
-            artist_item['artist_url'] = artist.xpath('./a[1]/@href').extract_first()
-            artist_item['artist_id'] = re.findall('[1-9]\d*', artist_item['artist_url'])[0]
-            # //*[@id="m-artist-box"]/li[11]/a[2]
-            artist_item['home_url'] = artist.xpath('./a[2]/@href').extract_first()
-            if artist_item['home_url'] is not None:
-                artist_item['home_id'] = re.findall('[1-9]\d*', artist_item['home_url']).pop()
-            else:
-                artist_item['home_id'] = None
-            ArtistsSpider.logger.info(artist)
-            ArtistsSpider.logger.info(artist_item)
+        parse_artists(response)
         pass
